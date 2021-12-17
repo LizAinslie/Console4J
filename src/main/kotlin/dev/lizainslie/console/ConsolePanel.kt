@@ -4,12 +4,24 @@ import dev.lizainslie.console.message.ConsoleMessage
 import dev.lizainslie.console.message.ConsoleMessageType
 import dev.lizainslie.console.message.messages.StringConsoleMessage
 import java.awt.BorderLayout
+import java.awt.Component
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import javax.swing.*
 
 class ConsolePanel(columns: Int = 20, welcome: String? = null) : JPanel(BorderLayout()), KeyListener, Runnable {
-    private val messagesModel = DefaultListModel<String>()
+    // Not sure if we need this, but I can't be assed to actually test this right now
+    private class ComponentListRenderer : ListCellRenderer<JComponent> {
+        override fun getListCellRendererComponent(
+            list: JList<out JComponent>?,
+            value: JComponent,
+            index: Int,
+            isSelected: Boolean,
+            cellHasFocus: Boolean
+        ): Component = value
+    }
+
+    private val messagesModel = DefaultListModel<JComponent>()
     private val messages = JList(messagesModel)
 
     private val textInputField = JTextField(columns)
@@ -20,6 +32,7 @@ class ConsolePanel(columns: Int = 20, welcome: String? = null) : JPanel(BorderLa
         textInputField.isEnabled = false
         this.add(this.textInputField, BorderLayout.PAGE_END)
 
+        this.messages.cellRenderer = ComponentListRenderer()
         val pane = JScrollPane(this.messages)
         pane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
         pane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
@@ -31,7 +44,7 @@ class ConsolePanel(columns: Int = 20, welcome: String? = null) : JPanel(BorderLa
     }
 
     fun sendMessage(message: ConsoleMessage<*>) {
-        this.messagesModel.addElement("${message.type.prefix} ${message.buildString()}")
+        this.messagesModel.addElement(message.build())
         this.messages.selectedIndex = this.messages.model.size - 1
         this.messages.ensureIndexIsVisible(this.messages.selectedIndex)
     }
@@ -41,7 +54,7 @@ class ConsolePanel(columns: Int = 20, welcome: String? = null) : JPanel(BorderLa
     }
 
     fun sendMessage() {
-        this.messagesModel.addElement("")
+        this.messagesModel.addElement(JLabel(""))
         this.messages.selectedIndex = this.messages.model.size - 1
         this.messages.ensureIndexIsVisible(this.messages.selectedIndex)
     }
