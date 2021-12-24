@@ -5,13 +5,13 @@ fun main() {
     val console = ConsolePanel(welcome = "uwu")
     Thread(console).start()
 
-    val userInput = console.promptString("uwu?")
+    val userInput = console.promptString("Enter some text")
     println(userInput)
     console.sendMessage("You said: $userInput")
 
     console.sendMessage(ListConsoleMessage(listOf(
-        "owo",
-        "uwu",
-        "nya"
+        "List Item 1",
+        "List Item 2",
+        "List Item 3"
     )))
 }
