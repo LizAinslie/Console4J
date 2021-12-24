@@ -11,6 +11,8 @@ class ListConsoleMessage<T>(
     value: List<T>,
     type: ConsoleMessageType = ConsoleMessageType.OUT
 ) : ConsoleMessage<List<T>>(value, type) {
+    constructor(value: List<T>) : this(value, ConsoleMessageType.OUT)
+
     override fun build(): JComponent {
         val out = JPanel()
         out.layout = BoxLayout(out, BoxLayout.Y_AXIS)
